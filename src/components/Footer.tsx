@@ -34,18 +34,7 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="absolute right-6 bottom-6">
-            <a 
-              href="#home" 
-              className={cn(
-                "w-12 h-12 rounded-full flex items-center justify-center liquid-glass-button",
-                "transition-all duration-300 hover:animate-liquid-pulse"
-              )}
-              aria-label="Back to top"
-            >
-            <ArrowUp size={20} />
-          </a>
-        </div>
+        
       </div>
     </footer>
   );

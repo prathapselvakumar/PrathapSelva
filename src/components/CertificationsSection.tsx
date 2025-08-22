@@ -18,60 +18,86 @@ type CertificationItem = {
 
 const certifications: CertificationItem[] = [
   {
-    id: "big-data-deep-learning",
-    title: "Big Data Analytics Using Deep Learning",
-    issuer: "National University of Singapore",
+    id: "python-flask",
+    title: "Python And Flask Framework Complete Course For Beginners",
+    issuer: "UDEMY",
     date: "2023",
-    category: "AI/ML",
+    category: "Web Development",
     description: [
-      "Advanced techniques in deep learning for big data processing and analysis",
-      "Hands-on experience with neural networks and large-scale data processing",
-      "Implementation of deep learning models for real-world data analytics challenges"
+      "Comprehensive introduction to Python programming language",
+      "Building web applications using Flask framework",
+      "Hands-on projects for practical experience"
     ],
-    skills: ["Deep Learning", "Big Data", "Python", "TensorFlow", "Data Analytics"],
+    skills: ["Python", "Flask", "Web Development", "Backend"],
   },
   {
-    id: "aws-sagemaker",
-    title: "AWS Certified – SageMaker",
-    issuer: "Amazon Web Services",
+    id: "excel-basics",
+    title: "Introduction to Microsoft Excel",
+    issuer: "Coursera",
     date: "2023",
-    category: "Cloud/ML",
+    category: "Productivity",
     description: [
-      "Comprehensive understanding of AWS SageMaker for machine learning workflows",
-      "Experience in building, training, and deploying ML models on AWS cloud",
-      "Knowledge of MLOps practices and automated ML pipelines"
+      "Fundamentals of Microsoft Excel",
+      "Data organization and analysis",
+      "Basic formulas and functions"
     ],
-    skills: ["AWS SageMaker", "Cloud Computing", "MLOps", "Machine Learning", "Model Deployment"],
+    skills: ["Microsoft Excel", "Data Analysis", "Spreadsheets", "Productivity Tools"],
   },
   {
-    id: "python-programming",
-    title: "Python for Data Science and AI",
+    id: "javascript-ibm",
+    title: "JavaScript Programming",
     issuer: "IBM",
     date: "2023",
     category: "Programming",
     description: [
-      "Comprehensive Python programming for data science applications",
-      "Libraries and frameworks for AI and machine learning development",
-      "Data manipulation, analysis, and visualization techniques"
+      "Core JavaScript programming concepts",
+      "Client-side web development",
+      "Interactive web applications"
     ],
-    skills: ["Python", "Data Science", "Pandas", "NumPy", "Matplotlib", "AI Development"],
+    skills: ["JavaScript", "Web Development", "Frontend"],
   },
   {
-    id: "react-development",
-    title: "React.js Development Certification",
-    issuer: "Meta",
-    date: "2024",
-    category: "Web Development",
+    id: "prompt-engineering",
+    title: "Introduction to Prompt Engineering for Generative AI",
+    issuer: "LinkedIn Learning",
+    date: "2023",
+    category: "AI/ML",
     description: [
-      "Modern React.js development patterns and best practices",
-      "Component architecture and state management",
-      "Building scalable and performant web applications"
+      "Fundamentals of prompt engineering",
+      "Techniques for effective AI interactions",
+      "Best practices for generative AI applications"
     ],
-    skills: ["React.js", "JavaScript", "Frontend Development", "Component Design", "State Management"],
+    skills: ["AI", "Prompt Engineering", "Generative AI", "Machine Learning"],
+  },
+  {
+    id: "numpy-pandas",
+    title: "NumPy & Pandas in Python",
+    issuer: "UDEMY",
+    date: "2022",
+    category: "Data Science",
+    description: [
+      "Data manipulation with NumPy and Pandas",
+      "Data analysis techniques",
+      "Practical applications and projects"
+    ],
+    skills: ["Python", "NumPy", "Pandas", "Data Analysis"],
+  },
+  {
+    id: "js-axix-intellects",
+    title: "JavaScript Programming",
+    issuer: "SRM AXIS Intellects",
+    date: "2022",
+    category: "Programming",
+    description: [
+      "JavaScript fundamentals",
+      "Web development concepts",
+      "Practical programming exercises"
+    ],
+    skills: ["JavaScript", "Web Development", "Programming"],
   },
 ];
 
-const categories = ["All", "AI/ML", "Cloud/ML", "Programming", "Web Development"];
+const categories = ["All", "AI/ML", "Programming", "Web Development", "Data Science", "Productivity"];
 
 export default function CertificationsSection() {
   const [activeCategory, setActiveCategory] = useState("All");
@@ -98,7 +124,11 @@ export default function CertificationsSection() {
 
   const filteredCertifications = activeCategory === "All" 
     ? certifications 
-    : certifications.filter(cert => cert.category === activeCategory);
+    : certifications.filter(cert => {
+        // Handle special characters in category names
+        const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return normalize(cert.category) === normalize(activeCategory);
+      });
 
   const handleMouseMove = (e: React.MouseEvent, card: HTMLDivElement) => {
     const rect = card.getBoundingClientRect();
@@ -139,21 +169,28 @@ export default function CertificationsSection() {
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
-              className={cn(
-                "px-4 py-2 rounded-full text-sm font-medium transition-all duration-300",
-                activeCategory === category
-                  ? "bg-primary text-primary-foreground shadow-lg"
-                  : "bg-secondary hover:bg-secondary/80 text-secondary-foreground"
-              )}
-            >
-              {category}
-            </button>
-          ))}
+        <div className="flex flex-wrap justify-center gap-4 mb-12">
+          {categories.map((category) => {
+            // Normalize for comparison
+            const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const isActive = normalize(activeCategory) === normalize(category);
+            
+            return (
+              <div className="relative" key={category}>
+                <button
+                  onClick={() => setActiveCategory(category)}
+                  className={cn(
+                    "px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 border relative z-10 cursor-pointer",
+                    isActive
+                      ? "bg-gradient-to-r from-primary/10 to-accent/10 text-primary border-primary/30 shadow-lg"
+                      : "bg-background/50 hover:bg-accent/5 text-muted-foreground hover:text-foreground border-border/30"
+                  )}
+                >
+                  {category}
+                </button>
+              </div>
+            );
+          })}
         </div>
         
         {/* Certifications Grid */}
@@ -188,7 +225,7 @@ export default function CertificationsSection() {
               
               <CardHeader className="relative z-10">
                 <div className="flex items-start justify-between mb-2">
-                  <Badge variant="secondary" className="mb-2">
+                  <Badge variant="outline" className="text-xs mb-2">
                     {cert.category}
                   </Badge>
                   <Award className="w-5 h-5 text-accent" />

@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 type ExperienceItem = {
   id: string;
   title: string;
+  subtitle?: string;
   company: string;
   period: string;
   description: string[];
@@ -38,7 +39,8 @@ const experiences: ExperienceItem[] = [
   },
   {
     id: "NUS Academic -Intern",
-    title: "Big Data Analytics using Deep Learning - Academic Internship ",
+    title: "Big Data Analytics using Deep Learning - Academic Internship",
+    
     company: "National University of Singapore",
     period: "DEC-2023 to JAN-2025",
     description: [
@@ -51,7 +53,7 @@ const experiences: ExperienceItem[] = [
   {
     id: "csq-intern",
     title: "Python Developer Intern",
-    company: "C-Square Info Solutions",
+    company: "C-Square Info Solutions (Subsidiary  of Reliance Retail)",
     period: "SEP-2023 TO NOV-2023",
     description: [
       "Developed Python scripts for automation and data processing",
@@ -139,13 +141,37 @@ export default function ExperienceSection() {
                   activeTab === exp.id ? "animate-fade-in" : "hidden"
                 )}
               >
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold">{exp.title}</h3>
-                  <p className="text-primary font-medium">{exp.company}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{exp.period}</p>
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 w-full">
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-bold">{exp.title}</h3>
+                    {exp.subtitle && <p className="text-lg text-muted-foreground -mt-1">{exp.subtitle}</p>}
+                    <p className="text-lg text-muted-foreground">{exp.company}</p>
+                    <p className="text-sm text-muted-foreground">{exp.period}</p>
+                  </div>
+                  {(exp.id === 'csq-intern' || exp.id === 'csq-swe' || exp.id === 'NUS Academic -Intern' || exp.id === 'qentelli-intern') && (
+                    <div className={`h-auto ${
+                      exp.id === 'NUS Academic -Intern' ? 'w-36' : 
+                      exp.id === 'qentelli-intern' ? 'w-28' : 'w-24'
+                    }`}>
+                      <img
+                        src={
+                          exp.id === 'NUS Academic -Intern' ? "/National University of Singapore.svg" : 
+                          exp.id === 'qentelli-intern' ? "/Qentelli.png" : 
+                          "/C-Square Info solution.png"
+                        }
+                        alt={
+                          exp.id === 'NUS Academic -Intern' ? "National University of Singapore Logo" : 
+                          exp.id === 'qentelli-intern' ? "Qentelli Solutions Logo" : 
+                          "C-Square Info Solutions Logo"
+                        }
+                        className="w-full h-auto object-contain"
+                      />
+                    </div>
+                  )}
                 </div>
                 
-                <ul className="space-y-2 mb-8">
+                <div className="mt-6">
+                <ul className="space-y-3 mb-8">
                   {exp.description.map((item, index) => (
                     <li key={index} className="flex items-start">
                       <span className="text-primary mr-2">•</span>
@@ -153,6 +179,7 @@ export default function ExperienceSection() {
                     </li>
                   ))}
                 </ul>
+                </div>
                 
                 <div className="relative group">
                   <div className="absolute inset-0 bg-background/50 backdrop-blur-sm rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>

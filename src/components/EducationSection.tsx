@@ -15,8 +15,8 @@ const education: EducationItem[] = [
   {
     id: "msc-robotics",
     degree: "MSc Robotics",
-    institution: "University of Manchester",
-    period: "2025 - 2026",
+    institution: "University of Manchester, Manchester, United Kingdom",
+    period: "2025 - Current",
     description: [
       "Advanced study in robotics systems, autonomous navigation, and intelligent control",
       "Research focus on AI-driven robotic applications and human-robot interaction",
@@ -28,8 +28,8 @@ const education: EducationItem[] = [
   {
     id: "btech-cse",
     degree: "B.Tech in Computer Science and Engineering",
-    institution: "SRM Institute of Science and Technology",
-    period: "2021 - 2025",
+    institution: "SRM Institute of Science and Technology, Chennai, India",
+    period: "2020 - 2024",
     cgpa: "8.49",
     description: [
       "Comprehensive study of computer science fundamentals including algorithms, data structures, and software engineering",
@@ -120,43 +120,56 @@ export default function EducationSection() {
                   activeTab === edu.id ? "animate-fade-in" : "hidden"
                 )}
               >
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold">{edu.degree}</h3>
-                  <p className="text-accent font-medium">{edu.institution}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{edu.period}</p>
-                  {edu.cgpa && (
-                    <p className="text-sm text-primary mt-1 font-medium">CGPA: {edu.cgpa}</p>
-                  )}
-                </div>
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <h3 className="text-2xl font-bold">{edu.degree}</h3>
+                      <p className="text-lg text-muted-foreground">{edu.institution}</p>
+                      <p className="text-sm text-muted-foreground">{edu.period}</p>
+                      {edu.cgpa && (
+                        <p className="text-sm text-primary font-medium mt-1">CGPA: {edu.cgpa}</p>
+                      )}
+                    </div>
+                    {(edu.id === 'msc-robotics' || edu.id === 'btech-cse') && (
+                      <div className="w-36 h-auto">
+                        <img 
+                          src={edu.id === 'msc-robotics' ? "/University_of_Manchester.svg" : "/SRM University.svg"} 
+                          alt={edu.id === 'msc-robotics' ? "University of Manchester Logo" : "SRM University Logo"} 
+                          className="w-full h-auto object-contain"
+                        />
+                      </div>
+                    )}
+                  </div>
                 
-                <div className="mb-8">
-                  <h4 className="text-sm font-semibold mb-3">Description</h4>
-                  <ul className="space-y-2">
-                    {edu.description.map((item, index) => (
-                      <li key={index} className="flex items-start">
-                        <span className="text-accent mr-2">•</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  <div className="mb-8">
+                    <h4 className="text-sm font-semibold mb-3">Description</h4>
+                    <ul className="space-y-2">
+                      {edu.description.map((item, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="text-accent mr-2">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 
-                <div>
-                  <div className="relative group">
-                    <div className="absolute inset-0 bg-background/50 backdrop-blur-sm rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <div className="relative z-10 p-4">
-                      <h4 className="text-sm font-medium mb-3 text-foreground/80">Key Achievements</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {edu.achievements.map((achievement, index) => (
-                          <span 
-                            key={index} 
-                            className="px-3 py-1.5 text-xs font-medium rounded-full border border-border/30 
-                                     bg-background/40 backdrop-blur-sm hover:bg-background/60 
-                                     transition-all duration-300 hover:shadow-sm text-foreground/90"
-                          >
-                            {achievement}
-                          </span>
-                        ))}
+                  <div>
+                    <div className="relative group">
+                      <div className="absolute inset-0 bg-background/50 backdrop-blur-sm rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="relative z-10 p-4">
+                        <h4 className="text-sm font-medium mb-3 text-foreground/80">Key Achievements</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {edu.achievements.map((achievement, index) => (
+                            <span 
+                              key={index} 
+                              className="px-3 py-1.5 text-xs font-medium rounded-full border border-border/30 
+                                       bg-background/40 backdrop-blur-sm hover:bg-background/60 
+                                       transition-all duration-300 hover:shadow-sm text-foreground/90"
+                            >
+                              {achievement}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
