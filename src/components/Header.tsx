@@ -88,31 +88,50 @@ export default function Header() {
       >
         <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex-shrink-0 z-10">
-              <a 
-                href="#home" 
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick("#home");
-                }}
-                className="group flex items-center space-x-2 text-xl md:text-2xl font-bold font-poppins transition-all duration-300 hover:scale-105"
-              >
-                <div className="relative">
-                  <span className="highlight-text bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-liquid-flow">
-                    Prathap
+            <div className="flex items-center space-x-4">
+              {/* Mobile Menu Button - Hidden on desktop */}
+              <div className="lg:hidden">
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className={cn(
+                    "liquid-glass-button p-2 rounded-xl transition-all duration-300",
+                    mobileMenuOpen ? "rotate-180 scale-110" : "hover:scale-105"
+                  )}
+                  aria-label="Toggle menu"
+                >
+                  {mobileMenuOpen ? (
+                    <X className="h-6 w-6" />
+                  ) : (
+                    <Menu className="h-6 w-6" />
+                  )}
+                </button>
+              </div>
+
+              {/* Logo - Visible on all screen sizes */}
+              <div className="flex-shrink-0 z-10">
+                <a 
+                  href="#home" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNavClick("#home");
+                  }}
+                  className="group flex items-center space-x-2 text-xl md:text-2xl font-bold font-poppins transition-all duration-300 hover:scale-105"
+                >
+                  <div className="relative">
+                    <span className="highlight-text bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-liquid-flow">
+                      Prathap
+                    </span>
+                    <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg blur opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+                  </div>
+                  <span className="text-foreground/90 group-hover:text-foreground transition-colors duration-300">
+                    SK
                   </span>
-                  <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-accent/20 rounded-lg blur opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
-                </div>
-                <span className="text-foreground/90 group-hover:text-foreground transition-colors duration-300">
-                  SK
-                </span>
-              </a>
+                </a>
+              </div>
             </div>
 
-            {/* Desktop Actions */}
-            <div className="hidden lg:flex items-center space-x-4">
-              {/* Desktop Navigation */}
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center space-x-4 ml-auto">
               <nav className="flex items-center space-x-1">
                 {navigation.map((item) => {
                   const isActive = activeSection === item.href.substring(1);
@@ -140,32 +159,11 @@ export default function Header() {
                   );
                 })}
               </nav>
-              
-              {/* Theme Toggle */}
-              <div className="liquid-glass-card p-2 rounded-xl">
-                <ThemeToggle />
-              </div>
             </div>
 
-            {/* Mobile Menu Button */}
-            <div className="flex lg:hidden items-center space-x-3">
-              <div className="liquid-glass-card p-2 rounded-xl">
-                <ThemeToggle />
-              </div>
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={cn(
-                  "liquid-glass-button p-2 rounded-xl transition-all duration-300",
-                  mobileMenuOpen ? "rotate-180 scale-110" : "hover:scale-105"
-                )}
-                aria-label="Toggle menu"
-              >
-                {mobileMenuOpen ? (
-                  <X className="h-6 w-6" />
-                ) : (
-                  <Menu className="h-6 w-6" />
-                )}
-              </button>
+            {/* Theme Toggle - Visible on all screens */}
+            <div className="liquid-glass-card p-2 rounded-xl ml-4">
+              <ThemeToggle />
             </div>
           </div>
         </nav>
@@ -189,8 +187,8 @@ export default function Header() {
         {/* Mobile Menu Panel */}
         <div
           className={cn(
-            "absolute top-0 right-0 h-full w-80 max-w-[85vw] liquid-glass transform transition-all duration-500 ease-out",
-            mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+            "absolute top-0 left-0 h-full w-80 max-w-[85vw] liquid-glass transform transition-all duration-500 ease-out lg:hidden",
+            mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
           <div className="flex flex-col h-full pt-20 pb-6 px-6">

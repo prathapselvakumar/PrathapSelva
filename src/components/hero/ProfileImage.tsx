@@ -7,7 +7,7 @@ interface ProfileImageProps {
 
 export default function ProfileImage({ imageRef }: ProfileImageProps) {
   return (
-    <div ref={imageRef} className="w-full md:w-2/5 flex justify-center md:justify-end order-2 md:order-1 transition-transform duration-300">
+    <div ref={imageRef} className="w-full md:w-2/5 flex justify-center order-2 md:order-1 transition-transform duration-300">
       <div className="relative group hover-3d">
         {/* Digital ring animation with enhanced effects */}
         <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-primary to-accent opacity-30 animate-spin-slow"></div>
