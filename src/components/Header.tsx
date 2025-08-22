@@ -66,12 +66,34 @@ export default function Header() {
     };
   }, [mobileMenuOpen]);
 
-  const handleNavClick = (href: string) => {
+  const handleNavClick = (href: string, e: React.MouseEvent) => {
+    e.preventDefault();
     setMobileMenuOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    
+    // Wait for the menu to close before scrolling
+    setTimeout(() => {
+      const targetId = href.startsWith('#') ? href.substring(1) : href;
+      const targetElement = document.getElementById(targetId);
+      
+      if (targetElement) {
+        // Calculate the position to scroll to
+        const headerOffset = 90; // Adjust based on your header height
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        // Scroll to the element
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+
+        // Update the URL
+        window.history.pushState({}, '', href);
+        
+        // Update the active section
+        setActiveSection(targetId);
+      }
+    }, 150); // Slightly longer delay to ensure menu is fully closed
   };
 
   return (
@@ -111,10 +133,7 @@ export default function Header() {
               <div className="flex-shrink-0 z-10">
                 <a 
                   href="#home" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick("#home");
-                  }}
+                  onClick={(e) => handleNavClick("#home", e)}
                   className="group flex items-center space-x-2 text-xl md:text-2xl font-bold font-poppins transition-all duration-300 hover:scale-105"
                 >
                   <div className="relative">
@@ -139,10 +158,7 @@ export default function Header() {
                     <a
                       key={item.name}
                       href={item.href}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleNavClick(item.href);
-                      }}
+                      onClick={(e) => handleNavClick(item.href, e)}
                       className={cn(
                         "relative px-4 py-2 text-sm font-medium rounded-xl transition-all duration-300 group",
                         isActive
@@ -200,10 +216,7 @@ export default function Header() {
                   <a
                     key={item.name}
                     href={item.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleNavClick(item.href);
-                    }}
+                    onClick={(e) => handleNavClick(item.href, e)}
                     className={cn(
                       "group flex items-center justify-between px-4 py-4 text-base font-medium rounded-xl transition-all duration-300",
                       isActive

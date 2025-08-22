@@ -86,9 +86,8 @@ export default function ExperienceSection() {
           {/* Tabs for larger screens */}
           <div className="hidden lg:flex lg:col-span-4 flex-col border-r border-border pr-4 space-y-4">
             {experiences.map((exp) => (
-              <div className="relative">
+              <div key={exp.id} className="relative">
                 <button
-                  key={exp.id}
                   onClick={() => setActiveTab(exp.id)}
                   className={cn(
                     "w-full liquid-glass-card p-6 cursor-pointer transition-all duration-300 relative",

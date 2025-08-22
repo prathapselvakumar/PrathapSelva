@@ -64,9 +64,8 @@ export default function EducationSection() {
           {/* Tabs for larger screens */}
           <div className="hidden lg:flex lg:col-span-4 flex-col border-r border-border pr-4 space-y-4">
             {education.map((edu) => (
-              <div className="relative">
+              <div key={edu.id} className="relative">
                 <button
-                  key={edu.id}
                   onClick={() => setActiveTab(edu.id)}
                   className={cn(
                     "w-full liquid-glass-card p-6 cursor-pointer transition-all duration-300 relative",
