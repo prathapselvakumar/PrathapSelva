@@ -4,6 +4,53 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent text selection and copying */
+* {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+}
+
+/* Bounce Animation */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-15%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(-8%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.bounce {
+  animation: bounce 1s infinite;
+}
+
+.bounce-slow {
+  animation: bounce-slow 2s infinite;
+}
+
+.hover\:bounce:hover {
+  animation: bounce 1s infinite;
+}
+
+.hover\:bounce-slow:hover {
+  animation: bounce-slow 2s infinite;
+}
+
 @layer base {
   :root {
     --background: 210 40% 98%;
