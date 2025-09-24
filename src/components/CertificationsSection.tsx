@@ -1,8 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Document, Page, pdfjs } from "react-pdf";
 import { Calendar, Award, ExternalLink } from "lucide-react";
+
+// We'll set the worker at runtime using a Blob URL to avoid bundler path issues
 
 type CertificationItem = {
   id: string;
@@ -29,6 +34,7 @@ const certifications: CertificationItem[] = [
       "Hands-on projects for practical experience"
     ],
     skills: ["Python", "Flask", "Web Development", "Backend"],
+    verificationUrl: "/Python%20And%20Flask%20Framework%20Complete%20Course%20For%20Beginners.pdf",
   },
   {
     id: "excel-basics",
@@ -42,6 +48,7 @@ const certifications: CertificationItem[] = [
       "Basic formulas and functions"
     ],
     skills: ["Microsoft Excel", "Data Analysis", "Spreadsheets", "Productivity Tools"],
+    verificationUrl: "/An%20Introduction%20to%20%20Excel.pdf",
   },
   {
     id: "javascript-ibm",
@@ -55,6 +62,7 @@ const certifications: CertificationItem[] = [
       "Interactive web applications"
     ],
     skills: ["JavaScript", "Web Development", "Frontend"],
+    verificationUrl: "/IBMCE%20CEJS1IN%20Certificate%20%EF%80%A7%20IBM.pdf",
   },
   {
     id: "prompt-engineering",
@@ -68,6 +76,7 @@ const certifications: CertificationItem[] = [
       "Best practices for generative AI applications"
     ],
     skills: ["AI", "Prompt Engineering", "Generative AI", "Machine Learning"],
+    verificationUrl: "/Introduction%20to%20Prompt%20Engineering.pdf",
   },
   {
     id: "numpy-pandas",
@@ -81,6 +90,7 @@ const certifications: CertificationItem[] = [
       "Practical applications and projects"
     ],
     skills: ["Python", "NumPy", "Pandas", "Data Analysis"],
+    verificationUrl: "/Numpy%20Pandas%20in%20Python.pdf",
   },
   {
     id: "js-axix-intellects",
@@ -94,6 +104,76 @@ const certifications: CertificationItem[] = [
       "Practical programming exercises"
     ],
     skills: ["JavaScript", "Web Development", "Programming"],
+    verificationUrl: "/SRM%20Axis%20Java%20Script.pdf",
+  },
+  {
+    id: "c-programming-scratch-to-master",
+    title: "C Programming from Scratch to Master",
+    issuer: "UDEMY",
+    date: "2024",
+    category: "Programming",
+    description: [
+      "C language fundamentals: variables, data types, control flow",
+      "Pointers, arrays, strings, and memory management",
+      "Functions, structures, files, and modular programming"
+    ],
+    skills: ["C", "Pointers", "Memory Management", "Problem Solving"],
+    verificationUrl: "/C%20Programming%20Language.pdf",
+  },
+  {
+    id: "basics-of-python-c-square",
+    title: "Basics of Python",
+    issuer: "C-SQUARE Info Solutions",
+    date: "2023",
+    category: "Programming",
+    description: [
+      "Core Python syntax and control structures",
+      "Functions, modules, and file handling",
+      "Hands-on practice with basic scripts"
+    ],
+    skills: ["Python", "Scripting", "Problem Solving"],
+    verificationUrl: "/Basics%20of%20Python%20C-SQUARE.pdf",
+  },
+  {
+    id: "power-bi-fundamentals",
+    title: "Power BI Fundamentals",
+    issuer: "Microsoft Power BI",
+    date: "2023",
+    category: "Data Science",
+    description: [
+      "Data import, modeling, and DAX basics",
+      "Interactive dashboards and reports",
+      "Publishing and sharing insights"
+    ],
+    skills: ["Power BI", "Data Modeling", "Dashboards"],
+    verificationUrl: "/Power%20Bi%20.pdf",
+  },
+  {
+    id: "srm-axis-ml-big-data",
+    title: "Machine Learning and Big Data",
+    issuer: "SRM AXIS",
+    date: "2022",
+    category: "AI/ML",
+    description: [
+      "ML fundamentals and workflows",
+      "Introduction to big data concepts",
+      "Practical applications and use cases"
+    ],
+    skills: ["Machine Learning", "Big Data", "Data Processing"],
+    verificationUrl: "/SRM%20AXIS-%20Machine%20Learning%20and%20Big%20Data.pdf",
+  },
+  {
+    id: "shah-1353-prathap-s",
+    title: "SHAH - 1353 PRATHAP S",
+    issuer: "SHAH",
+    date: "2023",
+    category: "Programming",
+    description: [
+      "Certification awarded to PRATHAP S",
+      "Demonstrated competence as per SHAH program"
+    ],
+    skills: ["Problem Solving"],
+    verificationUrl: "/SHAH%20-%201353%20PRATHAP%20S.pdf",
   },
 ];
 
@@ -104,6 +184,16 @@ export default function CertificationsSection() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewUrl, setViewUrl] = useState<string | null>(null);
+  const [viewTitle, setViewTitle] = useState<string>("");
+  const [numPages, setNumPages] = useState<number | null>(null);
+  const [scale, setScale] = useState<number>(1);
+  const viewerContainerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState<number>(0);
+  const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
+  const [pdfError, setPdfError] = useState<string | null>(null);
+  const [workerReady, setWorkerReady] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -121,6 +211,76 @@ export default function CertificationsSection() {
 
     return () => observer.disconnect();
   }, []);
+
+  // Measure container width when viewer opens and on resize
+  useEffect(() => {
+    if (!viewerOpen) return;
+    const el = viewerContainerRef.current;
+    if (!el) return;
+
+    const measure = () => setContainerWidth(el.clientWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [viewerOpen]);
+
+  // Initialize PDF.js worker from /public/pdf.worker.min.js as a Blob URL
+  useEffect(() => {
+    let canceled = false;
+    let objectUrl: string | null = null;
+    (async () => {
+      try {
+        setWorkerReady(false);
+        const res = await fetch('/pdf.worker.min.js', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`Worker HTTP ${res.status}`);
+        const blob = await res.blob();
+        objectUrl = URL.createObjectURL(blob);
+        pdfjs.GlobalWorkerOptions.workerSrc = objectUrl as unknown as string;
+        if (!canceled) setWorkerReady(true);
+      } catch (e: any) {
+        console.error('Failed to initialize pdf worker from /pdf.worker.min.js', e);
+        setPdfError('Failed to initialize PDF worker. Ensure pdf.worker.min.js is in the public/ folder.');
+      }
+    })();
+    return () => {
+      canceled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
+
+  // Load PDF as ArrayBuffer to avoid browser PDF viewer and encoding pitfalls
+  useEffect(() => {
+    const load = async () => {
+      if (!viewerOpen || !viewUrl) {
+        setPdfData(null);
+        setPdfError(null);
+        return;
+      }
+      try {
+        setPdfError(null);
+        setPdfData(null);
+        // Resolve URL robustly for Vite dev/prod and handle spaces/special chars
+        const isAbsolute = /^(https?:)?\/\//i.test(viewUrl);
+        let encodedPath = viewUrl;
+        if (!isAbsolute) {
+          const base = (import.meta as any).env?.BASE_URL || "/";
+          // Remove leading slash to safely join with base
+          const cleaned = viewUrl.replace(/^\//, "");
+          const joined = new URL(base, window.location.origin).toString().replace(/\/$/, "/") + cleaned;
+          encodedPath = encodeURI(joined);
+        }
+        const res = await fetch(encodedPath, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const buf = await res.arrayBuffer();
+        setPdfData(buf);
+      } catch (err: any) {
+        console.error('Failed to fetch PDF from', viewUrl, err);
+        setPdfError('Failed to load PDF. Please verify the file path in public/ and filename encoding.');
+      }
+    };
+    load();
+  }, [viewerOpen, viewUrl]);
 
   const filteredCertifications = activeCategory === "All" 
     ? certifications 
@@ -230,9 +390,11 @@ export default function CertificationsSection() {
                   </Badge>
                   <Award className="w-5 h-5 text-accent" />
                 </div>
-                <CardTitle className="text-lg leading-tight transition-transform duration-300 group-hover:-translate-y-1">
-                  {cert.title}
-                </CardTitle>
+                <div className="flex items-center justify-between gap-3">
+                  <CardTitle className="text-lg leading-tight transition-transform duration-300 group-hover:-translate-y-1">
+                    {cert.title}
+                  </CardTitle>
+                </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
                   <span className="font-medium text-accent">{cert.issuer}</span>
                   <span>•</span>
@@ -267,24 +429,67 @@ export default function CertificationsSection() {
                   </div>
                 </div>
                 
-                {cert.verificationUrl && (
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <a 
-                      href={cert.verificationUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors"
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                      Verify Credential
-                    </a>
-                  </div>
-                )}
+                <div className="mt-6 pt-4 border-t border-border flex justify-end">
+                  <Button
+                    size="sm"
+                    className="whitespace-nowrap"
+                    aria-label={`View certificate for ${cert.title}`}
+                    onClick={() => {
+                      const baseUrl = cert.verificationUrl || `/lovable-uploads/${cert.id}.pdf`;
+                      const fitParam = 'zoom=page-width';
+                      const viewerUrl = baseUrl.includes('#') ? `${baseUrl}&${fitParam}` : `${baseUrl}#${fitParam}`;
+                      setViewUrl(viewerUrl);
+                      setViewTitle(cert.title);
+                      setViewerOpen(true);
+                    }}
+                  >
+                    <ExternalLink className="w-4 h-4 mr-1" />
+                    View Certificate
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
       </div>
+      {/* In-page PDF Viewer */}
+      <Dialog open={viewerOpen} onOpenChange={setViewerOpen}>
+        <DialogContent className="max-w-3xl w-[90vw] top-[60%] sm:top-[55%]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between w-full pr-10 gap-3">
+              <span className="truncate max-w-[70%] sm:max-w-[75%] md:max-w-[80%]">
+                {viewTitle || "Certificate"}
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          <div
+            ref={viewerContainerRef}
+            className="w-full h-[65vh] rounded-md overflow-hidden border border-border bg-background"
+          >
+            {viewUrl ? (
+              <iframe
+                src={viewUrl}
+                className="w-full h-full"
+                title={viewTitle || "Certificate"}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-muted-foreground">No document available</div>
+            )}
+          </div>
+          <div className="px-4 py-3 border-t border-border flex justify-end">
+            {viewUrl && (
+              <a
+                href={viewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:text-primary/80"
+              >
+                Open in new tab
+              </a>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
