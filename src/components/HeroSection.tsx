@@ -5,7 +5,6 @@ import useMouseParallax from "@/hooks/useMouseParallax";
 import BackgroundEffects from "./hero/BackgroundEffects";
 import ProfileImage from "./hero/ProfileImage";
 import HeroContent from "./hero/HeroContent";
-import ScrollDownArrow from "./hero/ScrollDownArrow";
 
 export default function HeroSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -46,8 +45,7 @@ export default function HeroSection() {
         </div>
       </div>
       
-      {/* Scroll down arrow */}
-      <ScrollDownArrow />
+      
     </section>
   );
 }

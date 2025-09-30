@@ -1,4 +1,4 @@
-import { RefObject, useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 
 interface HeroContentProps {
   contentRef: RefObject<HTMLDivElement>;
@@ -6,6 +6,49 @@ interface HeroContentProps {
 
 export default function HeroContent({ contentRef }: HeroContentProps) {
   const [isBouncing, setIsBouncing] = useState(false);
+  const greetings = [
+    'Hi',        // English
+    'Hola',      // Spanish
+    'Salut',     // French
+    'Hallo',     // German
+    'Ciao',      // Italian
+    'Olá',       // Portuguese
+    'नमस्ते',    // Hindi
+    '你好',        // Chinese (Mandarin)
+    'こんにちは',  // Japanese
+    'مرحبا'       // Arabic
+  ];
+  const [greetIndex, setGreetIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [displayText, setDisplayText] = useState('');
+
+  // Typing animation: type, pause, delete, next greeting
+  useEffect(() => {
+    const fullText = greetings[greetIndex];
+    const typingSpeed = isDeleting ? 55 : 95; // ms per char
+    const pauseAtFull = 900; // ms pause when full word typed
+    const pauseAtEmpty = 400; // ms pause before next word
+
+    let timer: number;
+
+    if (!isDeleting && charIndex < fullText.length) {
+      timer = window.setTimeout(() => setCharIndex((c) => c + 1), typingSpeed);
+    } else if (!isDeleting && charIndex === fullText.length) {
+      timer = window.setTimeout(() => setIsDeleting(true), pauseAtFull);
+    } else if (isDeleting && charIndex > 0) {
+      timer = window.setTimeout(() => setCharIndex((c) => c - 1), typingSpeed);
+    } else if (isDeleting && charIndex === 0) {
+      timer = window.setTimeout(() => {
+        setIsDeleting(false);
+        setGreetIndex((idx) => (idx + 1) % greetings.length);
+      }, pauseAtEmpty);
+    }
+
+    setDisplayText(fullText.slice(0, charIndex));
+
+    return () => window.clearTimeout(timer);
+  }, [charIndex, isDeleting, greetIndex, greetings]);
 
   const handleDownloadResume = () => {
     // Start bounce animation
@@ -29,11 +72,17 @@ export default function HeroContent({ contentRef }: HeroContentProps) {
   return (
     <div ref={contentRef} className="w-full md:w-3/5 text-center md:text-left order-1 md:order-2 transition-transform duration-300">
       <div className="space-y-5 max-w-lg mx-auto md:mx-0">
-        {/* Simple "Hi" greeting */}
-        <div className="mb-4 h-16">
-          <div className="text-3xl md:text-4xl font-bold text-primary animate-text-reveal">
-            <span className="inline-block transform transition-all duration-500 text-4xl md:text-5xl">
-              Hi,
+        {/* Typing multilingual greeting (no underline) */}
+        <div className="mb-4 h-20" aria-live="polite">
+          <div className="font-bold">
+            <span
+              key={`${greetIndex}-${charIndex}-${isDeleting ? 'del' : 'type'}`}
+              className="inline-block transform transition-all duration-300 text-5xl md:text-6xl lg:text-7xl tracking-wide bg-gradient-to-r from-violet-600 via-indigo-500 to-blue-500 bg-clip-text text-transparent"
+              style={{ textShadow: '0 0 18px rgba(99,102,241,0.5), 0 0 30px rgba(59,130,246,0.35)' }}
+            >
+              {displayText}
+              <span className="inline-block w-[2px] md:w-[3px] h-8 md:h-10 align-middle bg-blue-500/80 ml-1 animate-pulse" />
+              {displayText && ','}
             </span>
           </div>
         </div>
