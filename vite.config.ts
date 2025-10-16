@@ -5,7 +5,9 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  
+  build: {
+    chunkSizeWarningLimit: 100000, // 100MB in KB
+  },
   server: {
     host: "::",
     port: 8080,
