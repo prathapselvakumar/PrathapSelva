@@ -50,27 +50,6 @@ export default function ProjectsSection() {
   const [isVisible, setIsVisible] = useState(false);
   
   // Handle mouse move effect on project cards for 3D tilt
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, ref: HTMLDivElement) => {
-    const rect = ref.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = (y - centerY) / 20;
-    const rotateY = (centerX - x) / 20;
-    
-    ref.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-  };
-  
-  const handleMouseLeave = (ref: HTMLDivElement) => {
-    ref.style.transition = 'transform 0.5s ease';
-    ref.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
-    
-    setTimeout(() => {
-      ref.style.transition = '';
-    }, 500);
-  };
 
   // Parallax effect for background elements
   const handleSectionScroll = () => {
@@ -160,30 +139,18 @@ export default function ProjectsSection() {
                 animationDelay: `${index * 150}ms`,
                 transition: 'transform 0.1s ease'
               }}
-              onMouseMove={(e) => {
-                const card = projectCardRefs.current[index];
-                if (card) handleMouseMove(e, card);
-              }}
-              onMouseLeave={() => {
-                const card = projectCardRefs.current[index];
-                if (card) handleMouseLeave(card);
-              }}
             >
-              {/* Enhanced background animation */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-              <div className="absolute inset-0 bg-circuit-pattern opacity-0 group-hover:opacity-5 transition-opacity duration-700 -z-10"></div>
-              
-              {/* Tech connection animated lines */}
-              <div className="absolute -bottom-3 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent transform translate-y-full group-hover:translate-y-0 transition-transform duration-700 delay-200"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5"></div>
+              <div className="absolute inset-0 bg-circuit-pattern opacity-5 -z-10"></div>
               
               <CardHeader className="relative z-10">
-                <CardTitle className="transition-transform duration-300 group-hover:-translate-y-1">{project.title}</CardTitle>
-                <CardDescription className="transition-all duration-300 group-hover:text-primary">{project.type}</CardDescription>
+                <CardTitle>{project.title}</CardTitle>
+                <CardDescription>{project.type}</CardDescription>
               </CardHeader>
               <CardContent className="relative z-10">
-                <p className="text-foreground/80 mb-4 transition-all duration-300 group-hover:text-foreground">{project.description}</p>
+                <p className="text-foreground mb-4">{project.description}</p>
                 {project.title === "Audio Search Engine" && (
-                  <div className="mt-4 rounded-lg overflow-hidden border border-border/50 group-hover:border-primary/50 transition-all duration-300">
+                  <div className="mt-4 rounded-lg overflow-hidden border border-border/50">
                     <video 
                       className="w-full h-auto rounded-md" 
                       controls 
