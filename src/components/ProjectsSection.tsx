@@ -147,23 +147,24 @@ export default function ProjectsSection() {
                 <CardTitle>{project.title}</CardTitle>
                 <CardDescription>{project.type}</CardDescription>
               </CardHeader>
-              <CardContent className="relative z-10">
-                <p className="text-foreground mb-4">{project.description}</p>
-                {project.title === "Audio Search Engine" && (
-                  <div className="mt-4 rounded-lg overflow-hidden border border-border/50">
-                    <video 
-                      className="w-full h-auto rounded-md" 
-                      controls 
-                      muted 
-                      preload="none"
-                      poster=""
-                    >
-                      <source src="public\Audio Search Engine.mp4" type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                  </div>
-                )}
-              </CardContent>
+            <CardContent className="relative z-10">
+  <p className="text-foreground mb-4">{project.description}</p>
+  {project.title === "Audio Search Engine" && (
+    <div className="mt-4 rounded-lg overflow-hidden border border-border/50">
+      <video 
+        className="w-full h-auto rounded-md" 
+        controls 
+        muted 
+        preload="none"
+        poster=""
+      >
+        <source src="/audio-search-engine.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  )}
+</CardContent>
+
               <CardFooter className="relative z-10">
                 <div className="flex flex-wrap gap-2">
                   {project.technologies.map((tech, i) => (
