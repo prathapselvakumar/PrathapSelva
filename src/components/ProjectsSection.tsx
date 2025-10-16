@@ -182,6 +182,20 @@ export default function ProjectsSection() {
               </CardHeader>
               <CardContent className="relative z-10">
                 <p className="text-foreground/80 mb-4 transition-all duration-300 group-hover:text-foreground">{project.description}</p>
+                {project.title === "Audio Search Engine" && (
+                  <div className="mt-4 rounded-lg overflow-hidden border border-border/50 group-hover:border-primary/50 transition-all duration-300">
+                    <video 
+                      className="w-full h-auto rounded-md" 
+                      controls 
+                      muted 
+                      preload="none"
+                      poster=""
+                    >
+                      <source src="/src/components/Audio Search Engine.mp4" type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                )}
               </CardContent>
               <CardFooter className="relative z-10">
                 <div className="flex flex-wrap gap-2">
