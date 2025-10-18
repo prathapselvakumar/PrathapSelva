@@ -151,16 +151,10 @@ export default function ProjectsSection() {
   <p className="text-foreground mb-4">{project.description}</p>
   {project.title === "Audio Search Engine" && (
     <div className="mt-4 rounded-lg overflow-hidden border border-border/50">
-      <video 
-        className="w-full h-auto rounded-md" 
-        controls 
-        muted 
-        preload="none"
-        poster=""
-      >
-        <source src="/audio-search-engine.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      <video controls>
+  <source src="/static-assets/Audio Search Engine.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
     </div>
   )}
 </CardContent>

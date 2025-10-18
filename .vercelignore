@@ -1,7 +1,10 @@
-<a 
-  href="static-assets/Audio Search Engine.mp4" 
-  download
-  className="text-primary underline"
->
-  Download / Watch Demo Video
-</a>
+# Ignore node_modules and other common directories
+node_modules/
+.next/
+out/
+
+# Optional: Add any other files/directories you want to exclude
+# from the Vercel deployment
+
+# Note: static-assets/ is intentionally not included here 
+# to ensure the video is deployed
